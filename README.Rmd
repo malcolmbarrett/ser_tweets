@@ -209,7 +209,9 @@ as_tbl_graph(g) %>%
     geom_node_text(aes(label = name), 
                    col = "#222222", 
                    repel = TRUE,
-                   size = 1.5) + 
+                   size = 1.5, 
+                   segment.colour = "grey75",
+                   segment.size = .35) + 
     theme_graph(base_size = 15, base_family = "Roboto Condensed") + 
   theme(plot.title = element_text(size = rel(1.5), face = "bold", margin = margin(3, 1, 10, 1)),
       plot.subtitle = element_text(size = rel(1.2)),
