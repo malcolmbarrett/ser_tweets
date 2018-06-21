@@ -194,9 +194,11 @@ size <- (log(size) + sqrt(size)) / 3
 ## reorder freq table
 size <- size[match(names(size), names(igraph::V(g)))]
 
-as_tbl_graph(g) %>% 
+twitter_graph <- as_tbl_graph(g) %>% 
   activate(nodes) %>% 
-  left_join(tibble::enframe(size) %>% mutate(value = as.numeric(value)), by = "name") %>% 
+  left_join(tibble::enframe(size) %>% mutate(value = as.numeric(value)), by = "name") 
+
+twitter_graph %>% 
   create_layout("nicely") %>% 
   ggraph() +     
   geom_edge_fan(edge_alpha = .3, spread = 3, 
@@ -221,4 +223,30 @@ as_tbl_graph(g) %>%
     x = NULL, y = NULL)
 
 ggsave("tweet_network.png", dpi = 320, width = 8, height = 6)
+
+twitter_graph %>% 
+  create_layout("circle") %>% 
+  ggraph() +     
+  geom_edge_fan(edge_alpha = .3, spread = 3, 
+                edge_colour = colorblindr::palette_OkabeIto[2]) + 
+    geom_node_point(size = 3,
+      shape = 21, 
+      col = "#E69F00", 
+      fill = "#E69F0090", 
+      show.legend = FALSE) + 
+    geom_node_text(aes(label = name), 
+                   col = "#222222", 
+                   repel = TRUE,
+                   size = 2.5, 
+                   segment.colour = "grey75",
+                   segment.size = .35) + 
+    theme_graph(base_size = 15, base_family = "Roboto Condensed") + 
+  theme(plot.title = element_text(size = rel(1.5), face = "bold", margin = margin(3, 1, 10, 1)),
+      plot.subtitle = element_text(size = rel(1.2)),
+      plot.caption = element_text(colour = "#444444")) +
+  labs(title = "Connections between Twitter users during SER 2018",
+    caption = "\n\nSource: Data gathered via Twitter's standard `search/tweets` API using rtweet\n Code provided by Mike Kearney (@kearneymw)",
+    x = NULL, y = NULL)
+
+ggsave("tweet_network_circle.png", dpi = 320, width = 8, height = 6)
 ```
